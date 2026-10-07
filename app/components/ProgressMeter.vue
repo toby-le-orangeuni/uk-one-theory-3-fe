@@ -8,8 +8,6 @@ defineProps<{
 <template>
   <div class="stack">
     <div v-if="label" class="muted">{{ label }}: {{ value }}%</div>
-    <div class="progress-track" role="progressbar" :aria-valuenow="value" aria-valuemin="0" aria-valuemax="100">
-      <div class="progress-fill" :style="{ width: `${Math.max(0, Math.min(value, 100))}%` }" />
-    </div>
+    <UProgress :model-value="Math.max(0, Math.min(value, 100))" color="primary" size="lg" />
   </div>
 </template>

@@ -18,20 +18,20 @@ const signOut = async () => {
 <template>
   <header class="app-nav">
     <NuxtLink class="brand" to="/dashboard">
-      <span class="brand-mark">1</span>
+      <span class="brand-mark">nu</span>
       <span>UK One Theory</span>
     </NuxtLink>
     <nav class="nav-links" aria-label="Student navigation">
       <NuxtLink v-for="item in navItems" :key="item.to" :to="item.to">
         {{ item.label }}
       </NuxtLink>
-      <button class="link-btn btn-ghost" type="button" @click="expireAccess">
+      <UButton variant="outline" color="neutral" size="sm" type="button" @click="expireAccess">
         Mock expired
-      </button>
-      <button class="link-btn btn-secondary" type="button" @click="signOut">
+      </UButton>
+      <UButton variant="soft" color="neutral" size="sm" type="button" @click="signOut">
         Log out
-      </button>
-      <span v-if="accessStatus === 'expired'" class="pill pill-danger">Expired</span>
+      </UButton>
+      <UBadge v-if="accessStatus === 'expired'" color="error" variant="soft">Expired</UBadge>
     </nav>
   </header>
 </template>

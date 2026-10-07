@@ -9,13 +9,17 @@ defineProps<{
 </script>
 
 <template>
-  <section class="state-box stack">
-    <span v-if="tone === 'warning'" class="pill pill-warning">Needs attention</span>
-    <span v-if="tone === 'danger'" class="pill pill-danger">Unavailable</span>
-    <h2>{{ title }}</h2>
-    <p class="muted">{{ message }}</p>
-    <NuxtLink v-if="actionLabel && actionTo" class="btn btn-primary" :to="actionTo">
-      {{ actionLabel }}
-    </NuxtLink>
-  </section>
+  <UAlert
+    :color="tone === 'danger' ? 'error' : tone === 'warning' ? 'warning' : 'primary'"
+    :variant="tone ? 'soft' : 'subtle'"
+    :icon="tone === 'danger' ? 'i-lucide-circle-alert' : tone === 'warning' ? 'i-lucide-triangle-alert' : 'i-lucide-info'"
+    :title="title"
+    :description="message"
+  >
+    <template v-if="actionLabel && actionTo" #actions>
+      <UButton :to="actionTo" color="primary" trailing-icon="i-lucide-arrow-right">
+        {{ actionLabel }}
+      </UButton>
+    </template>
+  </UAlert>
 </template>
