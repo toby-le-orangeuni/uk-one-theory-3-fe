@@ -3,89 +3,92 @@ const api = useMockApi()
 const { data: plans, pending } = await useAsyncData('landing-plans', () => api.getPlans())
 const sampleOpen = ref(false)
 const faqOpen = ref('payment')
-const selectedVehicle = ref('Car')
-const vehicles = ['Car', 'Motorcycle', 'Scooter']
+const availablePlans = computed(() => (plans.value ?? []).filter((plan) => plan.status === 'available'))
+
+const learningBlocks = [
+  {
+    title: 'Bite-size lessons',
+    description: 'Short theory modules with video, notes and a clear next step.',
+    icon: 'i-lucide-book-open-check'
+  },
+  {
+    title: 'Practice with feedback',
+    description: 'Answer questions, see the explanation, then continue while the idea is fresh.',
+    icon: 'i-lucide-message-circle-question'
+  },
+  {
+    title: 'Exam readiness',
+    description: 'Mock exams, hazard questions and progress summaries show what to revise next.',
+    icon: 'i-lucide-clipboard-check'
+  }
+]
+
+const stats = [
+  { value: '1 min', label: 'to start learning' },
+  { value: '30+', label: 'mock exam style checks' },
+  { value: '24/7', label: 'access on any device' }
+]
 </script>
 
 <template>
   <div>
-    <section class="hero-wrap">
-      <div class="container hero">
-        <div class="stack hero-copy">
-          <UBadge color="secondary" variant="solid" size="lg">CBR-style UK theory prep</UBadge>
-          <h1>Pass your theory with a clear route from lesson to mock exam.</h1>
-          <p class="lead">
-            Choose your vehicle, pick access, then study with videos, practice questions, hazard prep and progress feedback.
-          </p>
-
-          <div class="hero-steps" aria-label="Course selection steps">
-            <UCard class="step-card">
-              <div class="step-kicker">1 · Choose vehicle</div>
-              <div class="vehicle-tabs">
-                <button
-                  v-for="vehicle in vehicles"
-                  :key="vehicle"
-                  class="vehicle-tab"
-                  :class="{ active: selectedVehicle === vehicle }"
-                  type="button"
-                  @click="selectedVehicle = vehicle"
-                >
-                  {{ vehicle }}
-                </button>
-              </div>
-            </UCard>
-            <UCard class="step-card">
-              <div class="step-kicker">2 · Choose course</div>
-              <div class="course-choice">
-                <strong>Online theory</strong>
-                <span>Most flexible</span>
-                <span class="price-small">from GBP 5</span>
-              </div>
-            </UCard>
+    <section class="landing-hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="proof-row">
+            <UBadge color="primary" variant="soft" size="lg" icon="i-lucide-shield-check">Learner-first MVP</UBadge>
           </div>
+          <h1>Learn the theory, practise the questions, know when you are ready.</h1>
+          <p class="lead">
+            A focused student area for UK theory learners: lessons, videos, practice, mock exams, hazard preparation and progress in one place.
+          </p>
 
           <div class="actions">
             <UButton to="/plans" color="secondary" size="xl" trailing-icon="i-lucide-arrow-right">
-              Start now
+              View plans
             </UButton>
             <UButton color="neutral" variant="outline" size="xl" icon="i-lucide-circle-play" @click="sampleOpen = !sampleOpen">
-              Try sample questions
+              Try a question
             </UButton>
           </div>
-        </div>
-        <UCard class="hero-panel">
-          <div class="score-board">
-            <div>
-              <span>1.2M+</span>
-              <small>Learners passed</small>
-            </div>
-            <div>
-              <span>5/5</span>
-              <small>Review score</small>
-            </div>
-            <div>
-              <span>24/7</span>
-              <small>Online access</small>
-            </div>
-          </div>
-          <div class="hero-road" aria-hidden="true">
-            <span class="road-line" />
-            <span class="road-line" />
-            <span class="road-line" />
-            <div class="sign-card">
-              <strong>Next best action</strong>
-              <p class="muted">Finish road signs, then take a ten-question practice set.</p>
-            </div>
-          </div>
-        </UCard>
-      </div>
-    </section>
 
-    <section class="trust-strip">
-      <div class="container trust-grid">
-        <div><strong>1 minute</strong><span>to get started</span></div>
-        <div><strong>CBR-style</strong><span>practice and explanations</span></div>
-        <div><strong>Videos included</strong><span>watch, pause and repeat</span></div>
+          <div class="hero-stat-row">
+            <div v-for="stat in stats" :key="stat.label">
+              <strong>{{ stat.value }}</strong>
+              <span>{{ stat.label }}</span>
+            </div>
+          </div>
+        </div>
+
+        <UCard class="start-panel">
+          <div class="panel-heading">
+            <span>Get started</span>
+            <UBadge color="secondary" variant="solid">Online access</UBadge>
+          </div>
+
+          <div class="selector-block">
+            <p class="step-kicker">Select access plan</p>
+            <div class="course-options">
+              <NuxtLink
+                v-for="plan in availablePlans"
+                :key="plan.id"
+                class="course-option"
+                :class="{ recommended: plan.recommended }"
+                :to="`/checkout?plan=${plan.id}`"
+              >
+                <span>
+                  <strong>{{ plan.name }}</strong>
+                  <small>{{ plan.durationDays }} days of learner access</small>
+                </span>
+                <strong>GBP {{ plan.priceGbp }}</strong>
+              </NuxtLink>
+            </div>
+          </div>
+
+          <UButton block to="/plans" color="primary" size="lg" trailing-icon="i-lucide-arrow-right">
+            Compare all plans
+          </UButton>
+        </UCard>
       </div>
     </section>
 
@@ -93,16 +96,16 @@ const vehicles = ['Car', 'Motorcycle', 'Scooter']
       <div class="container">
         <div class="section-header">
           <div>
-            <h2>Everything You Need to Pass</h2>
-            <p class="muted">Lessons, videos, practice, mock tests and hazard preparation.</p>
+            <h2>Everything stays connected</h2>
+            <p class="muted">The learner always has one sensible next action.</p>
           </div>
           <UButton to="/plans" color="neutral" variant="outline">View Plans</UButton>
         </div>
         <div class="grid grid-3">
-          <UCard v-for="item in ['Theory lessons', 'Video explanations', 'Mock exam flow']" :key="item" class="feature-card">
-            <UIcon name="i-lucide-badge-check" class="feature-icon" />
-            <h2>{{ item }}</h2>
-            <p class="muted">Clear learning blocks with progress feedback and a direct next step.</p>
+          <UCard v-for="item in learningBlocks" :key="item.title" class="feature-card">
+            <UIcon :name="item.icon" class="feature-icon" />
+            <h2>{{ item.title }}</h2>
+            <p class="muted">{{ item.description }}</p>
           </UCard>
         </div>
       </div>
@@ -129,9 +132,9 @@ const vehicles = ['Car', 'Motorcycle', 'Scooter']
         </QuestionCard>
         <SystemState
           v-else
-          title="Sample Questions"
-          message="Open a sample card to see the practice feedback pattern used in the product."
-          action-label="Try sample questions"
+          title="Practice feedback is immediate"
+          message="Open a sample question to see how learners get the answer and explanation without leaving the flow."
+          action-label="Open sample"
           action-to="/#how-it-works"
         />
       </div>
@@ -141,8 +144,8 @@ const vehicles = ['Car', 'Motorcycle', 'Scooter']
       <div class="container">
         <div class="section-header">
           <div>
-            <h2>Pricing</h2>
-            <p class="muted">Plan names, prices and ordering match checkout.</p>
+            <h2>Simple access plans</h2>
+            <p class="muted">The same plan names, prices and order appear on checkout.</p>
           </div>
           <UButton to="/plans" color="neutral" variant="outline">Compare plans</UButton>
         </div>
@@ -155,11 +158,13 @@ const vehicles = ['Car', 'Motorcycle', 'Scooter']
 
     <section class="section">
       <div class="container grid grid-2">
-        <UCard>
-          <h2>Trust and method</h2>
-          <p class="muted">The MVP keeps learners moving from explanation to practice to assessment without exposing internal order details.</p>
+        <UCard class="support-card">
+          <UIcon name="i-lucide-route" class="feature-icon" />
+          <h2>Built for the learner journey</h2>
+          <p class="muted">Landing, checkout and the student area all point toward one outcome: continue learning and understand progress.</p>
         </UCard>
-        <UCard class="stack">
+        <UCard class="support-card stack">
+          <UIcon name="i-lucide-badge-help" class="feature-icon" />
           <h2>FAQ</h2>
           <button class="question-option" type="button" @click="faqOpen = faqOpen === 'payment' ? '' : 'payment'">
             Can I pay on one screen?
