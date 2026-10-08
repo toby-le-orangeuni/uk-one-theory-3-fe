@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const api = useMockApi()
+const api = useApi()
 const { data: plans, pending } = await useAsyncData('landing-plans', () => api.getPlans())
 
 const activePreview = ref('lesson')

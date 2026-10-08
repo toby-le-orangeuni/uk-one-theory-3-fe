@@ -1,5 +1,5 @@
-export type PlanStatus = 'Available' | 'Unavailable'
-export type AccessStatus = 'Active' | 'Expired' | 'Pending'
+export type PlanStatus = 'available' | 'unavailable'
+export type AccessStatus = 'active' | 'expired' | 'pending'
 export type LessonStatus = 'Locked' | 'Available' | 'In-progress' | 'Completed'
 
 export interface Plan {
@@ -18,6 +18,11 @@ export interface UserProfile {
   accessStatus: AccessStatus
   planId: string
   accessUntil: string
+  firstName?: string
+  lastName?: string
+  phone?: string
+  postcode?: string
+  startsAt?: string
 }
 
 export interface Lesson {
@@ -46,4 +51,15 @@ export interface ResultSummary {
   passed: boolean
   date: string
   weakAreas: string[]
+}
+
+export interface OrderSummary {
+  id: string
+  packageSlug: string
+  packageName: string
+  amount: string
+  currency: string
+  status: string
+  paidAt: string | null
+  createdAt: string
 }

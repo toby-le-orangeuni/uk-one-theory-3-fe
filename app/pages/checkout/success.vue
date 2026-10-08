@@ -1,15 +1,31 @@
 <script setup lang="ts">
 const route = useRoute()
-const api = useMockApi()
-const { activateMockAccess } = useAuth()
-const planId = computed(() => String(route.query.plan || '30-day'))
-const email = computed(() => String(route.query.email || 'learner@example.com'))
+const api = useApi()
+const { markAccessActive, refreshSession, userEmail } = useAuth()
+
+const planId = computed(() => String(route.query.plan || ''))
+const sessionId = computed(() => String(route.query.session || ''))
+const email = computed(() => String(route.query.email || userEmail.value || 'learner@example.com'))
+
 const { data: plan } = await useAsyncData(`success-plan-${planId.value}`, () => api.getPlan(planId.value))
+const { data: accessBundle } = await useAsyncData('success-access', async () => {
+  if (sessionId.value) {
+    try {
+      await api.getCheckoutSession(sessionId.value)
+    } catch {
+      // Session poll is best-effort; profile refresh still runs below.
+    }
+  }
+  await refreshSession()
+  markAccessActive()
+  return api.getProfile()
+})
+
 const pendingLink = ref(false)
 
 const goDashboard = async () => {
   pendingLink.value = true
-  activateMockAccess()
+  await refreshSession()
   await navigateTo('/dashboard')
 }
 </script>
@@ -29,11 +45,11 @@ const goDashboard = async () => {
       <div class="grid grid-2">
         <div class="card card-muted">
           <strong>Plan</strong>
-          <p>{{ plan?.name || '30 days' }}</p>
+          <p>{{ plan?.name || accessBundle?.planId || 'Access plan' }}</p>
         </div>
         <div class="card card-muted">
           <strong>Access until</strong>
-          <p>2026-11-06</p>
+          <p>{{ accessBundle?.accessUntil || '—' }}</p>
         </div>
       </div>
       <div class="actions">

@@ -1,5 +1,9 @@
-export default defineNuxtRouteMiddleware((to) => {
-  const { isAuthenticated, accessStatus } = useAuth()
+export default defineNuxtRouteMiddleware(async (to) => {
+  const { isAuthenticated, accessStatus, refreshSession, bootstrapped } = useAuth()
+
+  if (!bootstrapped.value && import.meta.client) {
+    await refreshSession()
+  }
 
   const protectedRoutes = [
     '/dashboard',
@@ -18,6 +22,13 @@ export default defineNuxtRouteMiddleware((to) => {
     return navigateTo('/plans')
   }
 
+  if (to.path === '/checkout' && !isAuthenticated.value) {
+    return navigateTo({
+      path: '/login',
+      query: { returnTo: to.fullPath }
+    })
+  }
+
   if (isProtected && !isAuthenticated.value) {
     return navigateTo({ path: '/login', query: { returnTo: to.fullPath } })
   }
@@ -26,7 +37,7 @@ export default defineNuxtRouteMiddleware((to) => {
     return navigateTo({ path: '/account', query: { state: 'expired' } })
   }
 
-  if (to.path === '/login' && isAuthenticated.value) {
+  if ((to.path === '/login' || to.path === '/register') && isAuthenticated.value) {
     return navigateTo(accessStatus.value === 'expired' ? '/account' : '/dashboard')
   }
 })

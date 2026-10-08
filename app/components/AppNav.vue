@@ -1,5 +1,11 @@
 <script setup lang="ts">
-const { logout, accessStatus } = useAuth()
+const { logout, accessStatus, userEmail } = useAuth()
+const api = useApi()
+const { data: profile } = useAsyncData('nav-profile', () => api.getProfile(), {
+  server: false,
+  lazy: true,
+  default: () => null
+})
 
 const navItems = [
   { label: 'Dashboard', to: '/dashboard', icon: 'i-lucide-layout-dashboard' },
@@ -9,6 +15,12 @@ const navItems = [
   { label: 'Progress', to: '/progress', icon: 'i-lucide-chart-no-axes-combined' },
   { label: 'Account', to: '/account', icon: 'i-lucide-user-round' }
 ]
+
+const displayName = computed(() => profile.value?.name || userEmail.value || 'Learner')
+const planLabel = computed(() => {
+  if (profile.value?.planId && profile.value.planId !== '—') return profile.value.planId
+  return accessStatus.value === 'active' ? 'Active access' : 'No active plan'
+})
 
 const signOut = async () => {
   logout()
@@ -35,8 +47,8 @@ const signOut = async () => {
 
     <div class="app-nav-bottom">
       <div class="app-mini-card">
-        <span>Mock learner</span>
-        <strong>30-day access</strong>
+        <span>{{ displayName }}</span>
+        <strong>{{ planLabel }}</strong>
       </div>
       <button class="btn btn-ghost btn-full" type="button" @click="signOut">
         <UIcon name="i-lucide-log-out" />

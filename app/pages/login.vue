@@ -12,9 +12,16 @@ const submit = async () => {
     return
   }
   loading.value = true
-  await new Promise((resolve) => setTimeout(resolve, 250))
-  login(form.email)
-  await navigateTo(String(route.query.returnTo || '/dashboard'))
+  try {
+    await login(form.email, form.password)
+    await navigateTo(String(route.query.returnTo || '/dashboard'))
+  } catch (err: unknown) {
+    const status = (err as { statusCode?: number; status?: number })?.statusCode
+      ?? (err as { statusCode?: number; status?: number })?.status
+    error.value = status === 401 ? 'Invalid email or password.' : 'Unable to log in. Try again.'
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -34,21 +41,20 @@ const submit = async () => {
       />
       <label class="field">
         <span>Email</span>
-        <input v-model="form.email" type="email" placeholder="ava@example.com">
+        <input v-model="form.email" type="email" placeholder="ava@example.com" autocomplete="email">
       </label>
       <label class="field">
         <span>Password</span>
-        <input v-model="form.password" type="password" placeholder="Password">
+        <input v-model="form.password" type="password" placeholder="Password" autocomplete="current-password">
       </label>
       <p v-if="error" class="field-error">{{ error }}</p>
       <button class="btn btn-primary btn-full" :disabled="loading" type="submit">
         {{ loading ? 'Logging in' : 'Log in' }}
       </button>
-      <div class="auth-divider"><span>or</span></div>
-      <button class="btn auth-social-button btn-full" type="button" @click="login('google@example.com')">
-        <UIcon name="i-lucide-chrome" />
-        Continue with Google
-      </button>
+      <p class="muted" style="text-align:center;margin:0">
+        New here?
+        <NuxtLink class="auth-link" :to="{ path: '/register', query: route.query }">Create an account</NuxtLink>
+      </p>
       <NuxtLink class="auth-link" to="/forgot-password">Forgot password?</NuxtLink>
     </form>
   </section>

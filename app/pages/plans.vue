@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const api = useMockApi()
-const { data: plans, pending } = await useAsyncData('plans', () => api.getPlans())
+const api = useApi()
+const { data: plans, pending, error } = await useAsyncData('plans', () => api.getPlans())
 </script>
 
 <template>
@@ -17,6 +17,12 @@ const { data: plans, pending } = await useAsyncData('plans', () => api.getPlans(
 
     <section class="container plans-board">
       <LoadingPanel v-if="pending" />
+      <SystemState
+        v-else-if="error"
+        title="Unable to load plans"
+        message="Check your connection and try again."
+        tone="danger"
+      />
       <div v-else class="plans-grid">
         <PlanCard v-for="plan in plans" :key="plan.id" :plan="plan" />
       </div>

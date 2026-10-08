@@ -1,10 +1,54 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'app' })
 
-const api = useMockApi()
-const { accessStatus, activateMockAccess, expireAccess } = useAuth()
-const { data: profile } = await useAsyncData('account-profile', () => api.getProfile())
+const api = useApi()
+const { accessStatus, refreshSession } = useAuth()
+
+const { data: profile, refresh: refreshProfile } = await useAsyncData('account-profile', () => api.getProfile())
+const { data: orders } = await useAsyncData('account-orders', () => api.getOrders())
+
+const form = reactive({
+  firstName: '',
+  lastName: '',
+  phone: '',
+  postcode: ''
+})
 const saved = ref(false)
+const saveError = ref('')
+const saving = ref(false)
+
+watch(
+  profile,
+  (value) => {
+    if (!value) return
+    form.firstName = value.firstName || ''
+    form.lastName = value.lastName || ''
+    form.phone = value.phone || ''
+    form.postcode = value.postcode || ''
+  },
+  { immediate: true }
+)
+
+const saveProfile = async () => {
+  saved.value = false
+  saveError.value = ''
+  saving.value = true
+  try {
+    await api.updateProfile({
+      first_name: form.firstName,
+      last_name: form.lastName,
+      phone: form.phone,
+      postcode: form.postcode
+    })
+    await refreshProfile()
+    await refreshSession()
+    saved.value = true
+  } catch {
+    saveError.value = 'Could not save profile.'
+  } finally {
+    saving.value = false
+  }
+}
 </script>
 
 <template>
@@ -37,15 +81,30 @@ const saved = ref(false)
         </span>
         <h2>Profile details</h2>
         <label class="field">
-          <span>Name</span>
-          <input :value="profile?.name" type="text">
+          <span>First name</span>
+          <input v-model="form.firstName" type="text">
+        </label>
+        <label class="field">
+          <span>Last name</span>
+          <input v-model="form.lastName" type="text">
         </label>
         <label class="field">
           <span>Email</span>
-          <input :value="profile?.email" type="email">
+          <input :value="profile?.email" type="email" disabled>
         </label>
-        <button class="btn btn-primary" type="button" @click="saved = true">Save profile</button>
+        <label class="field">
+          <span>Phone</span>
+          <input v-model="form.phone" type="text">
+        </label>
+        <label class="field">
+          <span>Postcode</span>
+          <input v-model="form.postcode" type="text">
+        </label>
+        <button class="btn btn-primary" type="button" :disabled="saving" @click="saveProfile">
+          {{ saving ? 'Saving' : 'Save profile' }}
+        </button>
         <p v-if="saved" class="pill">Profile saved</p>
+        <p v-if="saveError" class="field-error">{{ saveError }}</p>
       </article>
 
       <article class="panel stack">
@@ -58,7 +117,7 @@ const saved = ref(false)
           <span>Plan</span>
           <strong>{{ profile?.planId }}</strong>
           <span>Start</span>
-          <strong>2026-10-07</strong>
+          <strong>{{ profile?.startsAt || '—' }}</strong>
           <span>End</span>
           <strong>{{ profile?.accessUntil }}</strong>
           <span>Status</span>
@@ -66,25 +125,22 @@ const saved = ref(false)
             <span :class="accessStatus === 'expired' ? 'pill pill-danger' : 'pill'">{{ accessStatus }}</span>
           </strong>
         </div>
-        <div class="dev-tools">
-          <span>Mock state controls</span>
-          <div class="actions">
-            <button class="btn btn-ghost" type="button" @click="activateMockAccess">Set active</button>
-            <button class="btn btn-ghost" type="button" @click="expireAccess">Set expired</button>
-          </div>
-        </div>
+        <NuxtLink class="btn btn-secondary" to="/plans">Change plan</NuxtLink>
       </article>
     </div>
 
     <article class="panel stack">
       <span class="app-eyebrow">
-        <UIcon name="i-lucide-shield-check" />
-        Security
+        <UIcon name="i-lucide-receipt" />
+        Orders
       </span>
-      <h2>Security</h2>
-      <div class="actions">
-        <button class="btn btn-ghost" type="button">Change password</button>
-        <button class="btn btn-ghost" type="button">Change email</button>
+      <h2>Order history</h2>
+      <p v-if="!orders?.length" class="muted">No orders yet.</p>
+      <div v-else class="account-access-list">
+        <template v-for="order in orders" :key="order.id">
+          <span>{{ order.packageName }}</span>
+          <strong>{{ order.currency }} {{ order.amount }} · {{ order.status }}</strong>
+        </template>
       </div>
     </article>
   </section>

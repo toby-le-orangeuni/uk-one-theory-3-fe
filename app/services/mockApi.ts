@@ -8,7 +8,7 @@ export const plans: Plan[] = [
     name: '7 days',
     durationDays: 7,
     priceGbp: 5,
-    status: 'Available',
+    status: 'available',
     includes: ['All theory lessons', 'Practice questions', 'One mock exam']
   },
   {
@@ -17,7 +17,7 @@ export const plans: Plan[] = [
     durationDays: 30,
     priceGbp: 15,
     recommended: true,
-    status: 'Available',
+    status: 'available',
     includes: ['Everything in 7 days', 'Unlimited mock exams', 'Hazard practice']
   },
   {
@@ -25,7 +25,7 @@ export const plans: Plan[] = [
     name: '90 days',
     durationDays: 90,
     priceGbp: 25,
-    status: 'Available',
+    status: 'available',
     includes: ['Everything in 30 days', 'Longer revision window', 'Progress history']
   }
 ]
@@ -33,7 +33,7 @@ export const plans: Plan[] = [
 export const profile: UserProfile = {
   name: 'Ava Learner',
   email: 'ava@example.com',
-  accessStatus: 'Active',
+  accessStatus: 'active',
   planId: '30-day',
   accessUntil: '2026-11-06'
 }

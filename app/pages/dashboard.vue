@@ -1,13 +1,13 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'app' })
 
-const api = useMockApi()
+const api = useApi()
 const { accessStatus } = useAuth()
 const { data: profile } = await useAsyncData('dashboard-profile', () => api.getProfile())
 const { data: lessons } = await useAsyncData('dashboard-lessons', () => api.getLessons())
 const { data: result } = await useAsyncData('dashboard-result', () => api.getResult())
-const currentLesson = computed(() => lessons.value?.find((lesson) => lesson.status === 'in-progress') || lessons.value?.[0])
-const completedLessons = computed(() => lessons.value?.filter((lesson) => lesson.status === 'completed').length ?? 0)
+const currentLesson = computed(() => lessons.value?.find((lesson) => lesson.status === 'In-progress') || lessons.value?.[0])
+const completedLessons = computed(() => lessons.value?.filter((lesson) => lesson.status === 'Completed').length ?? 0)
 const totalLessons = computed(() => lessons.value?.length ?? 0)
 const courseProgress = 62
 </script>

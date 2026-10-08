@@ -1,34 +1,69 @@
 <script setup lang="ts">
 const route = useRoute()
-const api = useMockApi()
-const { activateMockAccess } = useAuth()
+const config = useRuntimeConfig()
+const api = useApi()
+const { isAuthenticated, userEmail, markAccessActive } = useAuth()
 
 const planId = computed(() => String(route.query.plan || ''))
 const { data: plan, pending } = await useAsyncData(`checkout-plan-${planId.value}`, () => api.getPlan(planId.value))
 
 const form = reactive({
-  email: '',
-  name: '',
   consent: false
 })
 const errors = reactive<Record<string, string>>({})
 const state = ref<'idle' | 'processing' | 'secure' | 'error'>('idle')
+const errorMessage = ref('')
 
 const validate = () => {
-  errors.email = form.email.includes('@') ? '' : 'Enter a valid email address.'
-  errors.name = form.name.trim().length > 1 ? '' : 'Enter your full name.'
   errors.consent = form.consent ? '' : 'Accept the terms before purchase.'
-  return !errors.email && !errors.name && !errors.consent
+  return !errors.consent
 }
 
 const confirmPurchase = async () => {
-  if (!validate()) return
+  if (!isAuthenticated.value) {
+    await navigateTo({ path: '/login', query: { returnTo: route.fullPath } })
+    return
+  }
+  if (!validate() || !plan.value) return
+
   state.value = 'processing'
-  await new Promise((resolve) => setTimeout(resolve, 500))
-  state.value = 'secure'
-  await new Promise((resolve) => setTimeout(resolve, 500))
-  activateMockAccess()
-  await navigateTo(`/checkout/success?plan=${planId.value}&email=${encodeURIComponent(form.email)}`)
+  errorMessage.value = ''
+  try {
+    const session = await api.createCheckoutSession({ package_slug: plan.value.id })
+    state.value = 'secure'
+
+    if (config.public.useCheckoutSimulation) {
+      try {
+        await api.simulateCheckoutPayment(session.session_id)
+        markAccessActive()
+        await navigateTo(`/checkout/success?plan=${plan.value.id}&session=${session.session_id}&email=${encodeURIComponent(userEmail.value)}`)
+        return
+      } catch (simulateError: unknown) {
+        const simulateStatus = (simulateError as { statusCode?: number; status?: number })?.statusCode
+          ?? (simulateError as { statusCode?: number; status?: number })?.status
+        // Remote API may disable simulate-payment outside DEBUG; fall through to Stripe.
+        if (simulateStatus !== 404) throw simulateError
+      }
+    }
+
+    if (session.checkout_url) {
+      if (import.meta.client) {
+        window.location.assign(session.checkout_url)
+        return
+      }
+      await navigateTo(session.checkout_url, { external: true })
+      return
+    }
+
+    throw new Error('Checkout URL missing')
+  } catch (err: unknown) {
+    state.value = 'error'
+    const status = (err as { statusCode?: number; status?: number })?.statusCode
+      ?? (err as { statusCode?: number; status?: number })?.status
+    errorMessage.value = status === 502
+      ? 'Payment provider is unavailable. Try again shortly.'
+      : 'Checkout failed. Your details were not charged.'
+  }
 }
 </script>
 
@@ -59,25 +94,15 @@ const confirmPurchase = async () => {
       </aside>
 
       <form class="panel form" @submit.prevent="confirmPurchase">
-        <h2>Account details</h2>
-        <label class="field">
-          <span>Email</span>
-          <input v-model="form.email" type="email" placeholder="you@example.com">
-          <small v-if="errors.email" class="field-error">{{ errors.email }}</small>
-        </label>
-        <label class="field">
-          <span>Name</span>
-          <input v-model="form.name" type="text" placeholder="Full name">
-          <small v-if="errors.name" class="field-error">{{ errors.name }}</small>
-        </label>
-        <button class="btn auth-social-button" type="button">
-          <UIcon name="i-lucide-chrome" />
-          Continue with Google
-        </button>
+        <h2>Account</h2>
+        <p class="muted">Signed in as <strong>{{ userEmail || 'your account' }}</strong>.</p>
+        <NuxtLink class="auth-link" to="/account">Manage account</NuxtLink>
 
         <div class="state-box stack">
-          <strong>Payment details</strong>
-          <p class="muted">Mock Stripe payment element. Real Stripe integration will mount here later.</p>
+          <strong>Payment</strong>
+          <p class="muted">
+            You will complete payment via Stripe Checkout. If the API allows simulation in DEBUG, that path is tried first.
+          </p>
           <label class="question-option">
             <input v-model="form.consent" type="checkbox">
             <span>I agree to the terms and understand this confirms a paid purchase.</span>
@@ -87,14 +112,14 @@ const confirmPurchase = async () => {
 
         <SystemState
           v-if="state === 'secure'"
-          title="Bank verification"
-          message="Mock 3D Secure check in progress. Stay on this screen while verification completes."
+          title="Confirming payment"
+          message="Provisioning your learner access. Stay on this screen."
           tone="warning"
         />
         <SystemState
           v-if="state === 'error'"
           title="Payment failed"
-          message="Your details are preserved. Try again when ready."
+          :message="errorMessage"
           tone="danger"
         />
 
