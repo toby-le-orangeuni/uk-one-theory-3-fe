@@ -17,7 +17,7 @@ const nextLesson = computed(() => {
 <template>
   <section class="lesson-layout">
     <aside class="panel stack">
-      <h2>Course sidebar</h2>
+      <h2>Lessons</h2>
       <NuxtLink v-for="item in lessons" :key="item.id" class="list-row" :to="`/course/${item.id}`">
         <span>{{ item.title }}</span>
       </NuxtLink>
@@ -25,8 +25,14 @@ const nextLesson = computed(() => {
 
     <article v-if="lesson" class="panel stack">
       <span :class="lesson.status === 'locked' ? 'pill pill-warning' : 'pill'">{{ complete ? 'completed' : lesson.status }}</span>
-      <h1 class="page-title">{{ lesson.title }}</h1>
-      <p class="lead">{{ lesson.summary }}</p>
+      <div>
+        <span class="app-eyebrow">
+          <UIcon name="i-lucide-play-circle" />
+          Lesson detail
+        </span>
+        <h1 class="page-title">{{ lesson.title }}</h1>
+        <p class="lead">{{ lesson.summary }}</p>
+      </div>
 
       <div class="state-box">
         <strong>Video player</strong>

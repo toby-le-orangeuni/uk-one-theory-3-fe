@@ -31,10 +31,14 @@ const submit = async () => {
 </script>
 
 <template>
-  <section class="stack">
-    <div class="section-header">
+  <section class="app-page">
+    <div class="app-page-hero">
       <div>
-        <h1 class="page-title">Hazard perception</h1>
+        <span class="app-eyebrow">
+          <UIcon name="i-lucide-radar" />
+          Timed section
+        </span>
+        <h1>Hazard perception</h1>
         <p class="lead">Short timed hazard-style multiple-choice section.</p>
       </div>
       <span :class="seconds <= 3 ? 'pill pill-danger' : 'pill'">Countdown: {{ Math.max(seconds, 0) }} seconds</span>

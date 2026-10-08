@@ -1,6 +1,6 @@
-export type PlanStatus = 'available' | 'unavailable'
-export type AccessStatus = 'active' | 'expired' | 'pending'
-export type LessonStatus = 'locked' | 'available' | 'in-progress' | 'completed'
+export type PlanStatus = 'Available' | 'Unavailable'
+export type AccessStatus = 'Active' | 'Expired' | 'Pending'
+export type LessonStatus = 'Locked' | 'Available' | 'In-progress' | 'Completed'
 
 export interface Plan {
   id: string
@@ -27,7 +27,7 @@ export interface Lesson {
   duration: string
   status: LessonStatus
   summary: string
-  videoState?: 'ready' | 'loading' | 'unavailable'
+  videoState?: 'Ready' | 'Loading' | 'Unavailable'
 }
 
 export interface Question {

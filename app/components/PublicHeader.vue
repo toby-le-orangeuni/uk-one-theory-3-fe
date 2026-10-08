@@ -7,11 +7,12 @@
       </NuxtLink>
       <nav class="nav-links" aria-label="Public navigation">
         <NuxtLink to="/#how-it-works">How it works</NuxtLink>
-        <NuxtLink to="/practice">Practice</NuxtLink>
+        <NuxtLink to="/#try">Try question</NuxtLink>
         <NuxtLink to="/#pricing">Pricing</NuxtLink>
+        <NuxtLink to="/#help">FAQ</NuxtLink>
         <NuxtLink to="/login">Login</NuxtLink>
         <UButton to="/plans" color="secondary" size="lg" trailing-icon="i-lucide-arrow-right">
-          View Plans
+          Get started
         </UButton>
       </nav>
     </div>

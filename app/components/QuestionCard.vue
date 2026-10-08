@@ -32,6 +32,8 @@ const reset = () => {
   validation.value = ''
 }
 
+watch(() => props.question.id, reset)
+
 defineExpose({ reset })
 </script>
 

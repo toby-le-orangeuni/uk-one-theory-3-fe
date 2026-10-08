@@ -18,13 +18,16 @@ const next = () => {
 </script>
 
 <template>
-  <section class="stack">
-    <div class="section-header">
+  <section class="app-page">
+    <div class="app-page-hero">
       <div>
-        <h1 class="page-title">Practice</h1>
+        <span class="app-eyebrow">
+          <UIcon name="i-lucide-list-checks" />
+          Topic practice
+        </span>
+        <h1>Practice</h1>
         <p class="lead">Practise by topic and learn from explanations immediately after submitting.</p>
       </div>
-      <NuxtLink class="btn btn-secondary" to="/dashboard">Exit practice</NuxtLink>
     </div>
 
     <SystemState

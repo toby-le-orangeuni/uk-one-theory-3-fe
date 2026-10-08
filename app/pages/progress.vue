@@ -6,25 +6,29 @@ const { data: result } = await useAsyncData('progress-result', () => api.getResu
 </script>
 
 <template>
-  <section class="stack">
-    <div class="section-header">
+  <section class="app-page">
+    <div class="app-page-hero">
       <div>
-        <h1 class="page-title">Progress</h1>
+        <span class="app-eyebrow">
+          <UIcon name="i-lucide-chart-no-axes-combined" />
+          Readiness summary
+        </span>
+        <h1>Progress</h1>
         <p class="lead">Practical readiness feedback and the next recommended action.</p>
       </div>
       <NuxtLink class="btn btn-primary" to="/practice">Open practice</NuxtLink>
     </div>
 
-    <div class="grid grid-3">
-      <article class="card">
+    <div class="app-metric-grid">
+      <article class="app-metric-card">
         <h2>Course</h2>
         <ProgressMeter :value="62" label="Lessons complete" />
       </article>
-      <article class="card">
+      <article class="app-metric-card">
         <h2>Practice</h2>
         <ProgressMeter :value="80" label="Recent topic score" />
       </article>
-      <article class="card">
+      <article class="app-metric-card">
         <h2>Mock exam</h2>
         <ProgressMeter :value="result ? Math.round((result.score / result.total) * 100) : 0" label="Latest score" />
       </article>

@@ -13,10 +13,14 @@ const chapters = computed(() => {
 </script>
 
 <template>
-  <section class="stack">
-    <div class="section-header">
+  <section class="app-page">
+    <div class="app-page-hero">
       <div>
-        <h1 class="page-title">Course</h1>
+        <span class="app-eyebrow">
+          <UIcon name="i-lucide-library-big" />
+          Theory lessons
+        </span>
+        <h1>Course</h1>
         <p class="lead">Browse theory lessons and continue in order.</p>
       </div>
       <NuxtLink class="btn btn-primary" to="/course/road-signs">Resume current lesson</NuxtLink>

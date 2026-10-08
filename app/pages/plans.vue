@@ -4,23 +4,46 @@ const { data: plans, pending } = await useAsyncData('plans', () => api.getPlans(
 </script>
 
 <template>
-  <section class="container section stack">
-    <div class="section-header">
+  <div class="plans-page">
+    <section class="container plans-hero">
       <div>
-        <h1 class="page-title">Choose your access plan</h1>
-        <p class="lead">Every available plan includes lessons, videos, practice questions, mock exams and hazard preparation.</p>
+        <p class="section-kicker">Access plans</p>
+        <h1>Choose the access window that fits your test date.</h1>
+        <p>
+          Every plan opens the same learner journey: lessons, practice questions, mock exams, hazard preparation and progress feedback.
+        </p>
       </div>
-      <NuxtLink class="btn btn-secondary" to="/">Back to landing</NuxtLink>
-    </div>
+    </section>
 
-    <LoadingPanel v-if="pending" />
-    <div v-else class="grid grid-3">
-      <PlanCard v-for="plan in plans" :key="plan.id" :plan="plan" />
-    </div>
+    <section class="container plans-board">
+      <LoadingPanel v-if="pending" />
+      <div v-else class="plans-grid">
+        <PlanCard v-for="plan in plans" :key="plan.id" :plan="plan" />
+      </div>
+    </section>
 
-    <article class="card">
-      <h2>Payment reassurance</h2>
-      <p class="muted">Checkout is one screen: selected package, account details and the mocked Stripe payment element stay together.</p>
-    </article>
-  </section>
+    <section class="container reassurance-strip">
+      <article>
+        <UIcon name="i-lucide-layout-panel-top" />
+        <span>
+          <strong>One checkout screen</strong>
+          <small>Plan, account details and payment preview stay together.</small>
+        </span>
+      </article>
+      <article>
+        <UIcon name="i-lucide-credit-card" />
+        <span>
+          <strong>Simulated payment</strong>
+          <small>No card is charged while Stripe is out of scope.</small>
+        </span>
+      </article>
+      <article>
+        <UIcon name="i-lucide-rotate-ccw" />
+        <span>
+          <strong>Easy to change</strong>
+          <small>Return here from checkout to choose another access window.</small>
+        </span>
+      </article>
+    </section>
+  </div>
 </template>

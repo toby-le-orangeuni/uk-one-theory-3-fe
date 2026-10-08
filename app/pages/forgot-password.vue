@@ -14,10 +14,13 @@ const submit = () => {
 </script>
 
 <template>
-  <section class="container section">
-    <form class="panel form" style="max-width: 520px; margin: 0 auto;" @submit.prevent="submit">
-      <h1 class="page-title">Reset password</h1>
-      <p class="muted">Enter your email. If an account exists, a reset link will be sent.</p>
+  <section class="auth-shell">
+    <form class="auth-card form" @submit.prevent="submit">
+      <div class="auth-heading">
+        <UBadge color="primary" variant="soft" icon="i-lucide-mail">Account recovery</UBadge>
+        <h1>Reset password</h1>
+        <p>Enter your email. If an account exists, a reset link will be sent.</p>
+      </div>
       <label class="field">
         <span>Email</span>
         <input v-model="email" type="email" placeholder="you@example.com">
@@ -28,8 +31,8 @@ const submit = () => {
         title="Check your email"
         message="If that email is registered, the reset link is on its way."
       />
-      <button class="btn btn-primary" type="submit">Send reset link</button>
-      <NuxtLink class="muted" to="/login">Return to login</NuxtLink>
+      <button class="btn btn-primary btn-full" type="submit">Send reset link</button>
+      <NuxtLink class="auth-link" to="/login">Return to login</NuxtLink>
     </form>
   </section>
 </template>

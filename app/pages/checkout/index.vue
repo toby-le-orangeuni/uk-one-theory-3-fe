@@ -70,7 +70,10 @@ const confirmPurchase = async () => {
           <input v-model="form.name" type="text" placeholder="Full name">
           <small v-if="errors.name" class="field-error">{{ errors.name }}</small>
         </label>
-        <button class="btn btn-secondary" type="button">Continue with Google</button>
+        <button class="btn auth-social-button" type="button">
+          <UIcon name="i-lucide-chrome" />
+          Continue with Google
+        </button>
 
         <div class="state-box stack">
           <strong>Payment details</strong>

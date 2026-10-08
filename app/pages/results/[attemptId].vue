@@ -6,20 +6,26 @@ const { data: result } = await useAsyncData('result-summary', () => api.getResul
 </script>
 
 <template>
-  <section class="stack">
+  <section class="app-page">
     <article v-if="result" class="panel stack">
       <span :class="result.passed ? 'pill' : 'pill pill-danger'">{{ result.passed ? 'Passed' : 'Failed' }}</span>
-      <h1 class="page-title">Result summary</h1>
-      <div class="grid grid-3">
-        <div class="card card-muted">
+      <div>
+        <span class="app-eyebrow">
+          <UIcon name="i-lucide-award" />
+          Attempt result
+        </span>
+        <h1 class="page-title">Result summary</h1>
+      </div>
+      <div class="app-metric-grid">
+        <div class="app-metric-card">
           <strong>Score</strong>
           <p>{{ result.score }} / {{ result.total }}</p>
         </div>
-        <div class="card card-muted">
+        <div class="app-metric-card">
           <strong>Date</strong>
           <p>{{ result.date }}</p>
         </div>
-        <div class="card card-muted">
+        <div class="app-metric-card">
           <strong>Attempt</strong>
           <p>{{ $route.params.attemptId }}</p>
         </div>

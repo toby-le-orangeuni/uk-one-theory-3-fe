@@ -19,9 +19,13 @@ const submit = async () => {
 </script>
 
 <template>
-  <section class="container section">
-    <form class="panel form" style="max-width: 520px; margin: 0 auto;" @submit.prevent="submit">
-      <h1 class="page-title">Login</h1>
+  <section class="auth-shell">
+    <form class="auth-card form" @submit.prevent="submit">
+      <div class="auth-heading">
+        <UBadge color="primary" variant="soft" icon="i-lucide-lock-keyhole">Learner access</UBadge>
+        <h1>Welcome back</h1>
+        <p>Log in to continue lessons, practice questions and mock exam progress.</p>
+      </div>
       <SystemState
         v-if="$route.query.expired"
         title="Subscription expired"
@@ -37,11 +41,15 @@ const submit = async () => {
         <input v-model="form.password" type="password" placeholder="Password">
       </label>
       <p v-if="error" class="field-error">{{ error }}</p>
-      <button class="btn btn-primary" :disabled="loading" type="submit">
+      <button class="btn btn-primary btn-full" :disabled="loading" type="submit">
         {{ loading ? 'Logging in' : 'Log in' }}
       </button>
-      <button class="btn btn-secondary" type="button" @click="login('google@example.com')">Continue with Google</button>
-      <NuxtLink class="muted" to="/forgot-password">Forgot password?</NuxtLink>
+      <div class="auth-divider"><span>or</span></div>
+      <button class="btn auth-social-button btn-full" type="button" @click="login('google@example.com')">
+        <UIcon name="i-lucide-chrome" />
+        Continue with Google
+      </button>
+      <NuxtLink class="auth-link" to="/forgot-password">Forgot password?</NuxtLink>
     </form>
   </section>
 </template>

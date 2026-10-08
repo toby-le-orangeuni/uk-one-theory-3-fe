@@ -10,31 +10,43 @@ const start = async () => {
 </script>
 
 <template>
-  <section class="stack">
-    <article class="panel stack">
-      <h1 class="page-title">Mock exam</h1>
-      <p class="lead">Answer realistic theory questions, then complete the hazard section before viewing results.</p>
-      <div class="grid grid-3">
-        <div class="card card-muted">
-          <strong>Questions</strong>
-          <p>50 mocked exam questions</p>
+  <section class="app-page">
+    <div class="app-page-hero">
+      <div>
+        <span class="app-eyebrow">
+          <UIcon name="i-lucide-clipboard-check" />
+          Readiness check
+        </span>
+        <h1>Mock exam</h1>
+        <p class="lead">Answer realistic theory questions, then complete the hazard section before viewing results.</p>
+      </div>
+      <button class="btn btn-primary" :disabled="starting" type="button" @click="start">
+        {{ starting ? 'Starting exam' : 'Start mock exam' }}
+      </button>
+    </div>
+
+    <article class="app-action-card">
+      <div class="app-metric-grid">
+        <div class="app-metric-card">
+          <small>Questions</small>
+          <strong>50</strong>
+          <p class="muted">Mocked exam shell</p>
         </div>
-        <div class="card card-muted">
-          <strong>Timing</strong>
-          <p>Timer-ready shell</p>
+        <div class="app-metric-card">
+          <small>Timing</small>
+          <strong>Ready</strong>
+          <p class="muted">Timer state prepared</p>
         </div>
-        <div class="card card-muted">
-          <strong>Back navigation</strong>
-          <p>Explain limits before start</p>
+        <div class="app-metric-card">
+          <small>Flow</small>
+          <strong>2 parts</strong>
+          <p class="muted">Theory then hazard</p>
         </div>
       </div>
       <SystemState
         title="Before you start"
         message="If back navigation is restricted in the real exam mode, the learner should see that rule here first."
       />
-      <button class="btn btn-primary" :disabled="starting" type="button" @click="start">
-        {{ starting ? 'Starting exam' : 'Start mock exam' }}
-      </button>
     </article>
   </section>
 </template>

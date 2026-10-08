@@ -8,7 +8,7 @@ export const plans: Plan[] = [
     name: '7 days',
     durationDays: 7,
     priceGbp: 5,
-    status: 'available',
+    status: 'Available',
     includes: ['All theory lessons', 'Practice questions', 'One mock exam']
   },
   {
@@ -17,7 +17,7 @@ export const plans: Plan[] = [
     durationDays: 30,
     priceGbp: 15,
     recommended: true,
-    status: 'available',
+    status: 'Available',
     includes: ['Everything in 7 days', 'Unlimited mock exams', 'Hazard practice']
   },
   {
@@ -25,7 +25,7 @@ export const plans: Plan[] = [
     name: '90 days',
     durationDays: 90,
     priceGbp: 25,
-    status: 'unavailable',
+    status: 'Available',
     includes: ['Everything in 30 days', 'Longer revision window', 'Progress history']
   }
 ]
@@ -33,7 +33,7 @@ export const plans: Plan[] = [
 export const profile: UserProfile = {
   name: 'Ava Learner',
   email: 'ava@example.com',
-  accessStatus: 'active',
+  accessStatus: 'Active',
   planId: '30-day',
   accessUntil: '2026-11-06'
 }
@@ -44,36 +44,36 @@ export const lessons: Lesson[] = [
     chapter: 'Chapter 1',
     title: 'Road signs and markings',
     duration: '18 min',
-    status: 'in-progress',
+    status: 'In-progress',
     summary: 'Understand common signs, road markings, and priority rules.',
-    videoState: 'ready'
+    videoState: 'Ready'
   },
   {
     id: 'alertness',
     chapter: 'Chapter 1',
     title: 'Alertness and observation',
     duration: '14 min',
-    status: 'available',
+    status: 'Available',
     summary: 'Build safe habits for scanning, mirrors, and anticipating risk.',
-    videoState: 'loading'
+    videoState: 'Loading'
   },
   {
     id: 'motorways',
     chapter: 'Chapter 2',
     title: 'Motorway rules',
     duration: '20 min',
-    status: 'locked',
+    status: 'Locked',
     summary: 'Lane discipline, joining, leaving, speed control, and breakdowns.',
-    videoState: 'unavailable'
+    videoState: 'Unavailable'
   },
   {
     id: 'vulnerable-road-users',
     chapter: 'Chapter 2',
     title: 'Vulnerable road users',
     duration: '16 min',
-    status: 'completed',
+    status: 'Completed',
     summary: 'Cyclists, pedestrians, horse riders, and shared-space judgement.',
-    videoState: 'ready'
+    videoState: 'Ready'
   }
 ]
 

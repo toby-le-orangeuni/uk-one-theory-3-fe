@@ -7,10 +7,13 @@ const { data: profile } = await useAsyncData('dashboard-profile', () => api.getP
 const { data: lessons } = await useAsyncData('dashboard-lessons', () => api.getLessons())
 const { data: result } = await useAsyncData('dashboard-result', () => api.getResult())
 const currentLesson = computed(() => lessons.value?.find((lesson) => lesson.status === 'in-progress') || lessons.value?.[0])
+const completedLessons = computed(() => lessons.value?.filter((lesson) => lesson.status === 'completed').length ?? 0)
+const totalLessons = computed(() => lessons.value?.length ?? 0)
+const courseProgress = 62
 </script>
 
 <template>
-  <section class="stack">
+  <section class="dashboard-page">
     <SystemState
       v-if="accessStatus === 'expired'"
       title="Access expired"
@@ -20,40 +23,87 @@ const currentLesson = computed(() => lessons.value?.find((lesson) => lesson.stat
       tone="warning"
     />
 
-    <div class="section-header">
-      <div>
-        <h1 class="page-title">Dashboard</h1>
-        <p class="lead">Access active until {{ profile?.accessUntil }}. Continue where you left off.</p>
+    <section class="dashboard-hero">
+      <div class="dashboard-hero-copy">
+        <span class="dashboard-eyebrow">
+          <UIcon name="i-lucide-circle-check" />
+          Active learner access
+        </span>
+        <h1>Welcome back, {{ profile?.name?.split(' ')[0] || 'learner' }}</h1>
+        <p>Resume the next lesson, practise weak areas and keep your mock-test readiness moving.</p>
       </div>
-      <NuxtLink class="btn btn-primary" :to="`/course/${currentLesson?.id || 'road-signs'}`">Resume</NuxtLink>
-    </div>
+      <div class="dashboard-access-card">
+        <span>Access until</span>
+        <strong>{{ profile?.accessUntil }}</strong>
+        <NuxtLink class="btn btn-primary btn-full" :to="`/course/${currentLesson?.id || 'road-signs'}`">
+          Resume lesson
+          <UIcon name="i-lucide-arrow-right" />
+        </NuxtLink>
+      </div>
+    </section>
 
-    <article class="panel stack">
-      <h2>Continue learning</h2>
-      <p class="muted">{{ currentLesson?.title }} · {{ currentLesson?.summary }}</p>
-      <ProgressMeter :value="62" label="Course progress" />
-    </article>
+    <section class="dashboard-main-grid">
+      <article class="dashboard-current-card">
+        <div class="dashboard-card-head">
+          <span class="dashboard-icon-badge">
+            <UIcon name="i-lucide-book-open-check" />
+          </span>
+          <UBadge color="primary" variant="soft">Continue learning</UBadge>
+        </div>
+        <h2>{{ currentLesson?.title }}</h2>
+        <p>{{ currentLesson?.summary }}</p>
+        <div class="dashboard-progress-row">
+          <span>Course progress</span>
+          <strong>{{ courseProgress }}%</strong>
+        </div>
+        <ProgressMeter :value="courseProgress" />
+        <div class="dashboard-card-actions">
+          <NuxtLink class="btn btn-primary" :to="`/course/${currentLesson?.id || 'road-signs'}`">
+            Continue lesson
+            <UIcon name="i-lucide-arrow-right" />
+          </NuxtLink>
+          <NuxtLink class="btn btn-ghost" to="/course">View course</NuxtLink>
+        </div>
+      </article>
 
-    <div class="grid grid-3">
-      <NuxtLink class="card stack" to="/course">
-        <h2>Theory lessons</h2>
-        <p class="muted">62% complete</p>
-      </NuxtLink>
-      <NuxtLink class="card stack" to="/practice">
-        <h2>Practice</h2>
-        <p class="muted">Topic score: 8 of 10</p>
-      </NuxtLink>
-      <NuxtLink class="card stack" to="/mock-exams">
-        <h2>Mock exam</h2>
-        <p class="muted">Last result: {{ result?.score }}/{{ result?.total }}</p>
-      </NuxtLink>
-    </div>
+      <aside class="dashboard-next-card">
+        <span class="dashboard-icon-badge dashboard-icon-badge-amber">
+          <UIcon name="i-lucide-route" />
+        </span>
+        <h2>Next step</h2>
+        <p>Finish road signs, then complete a related practice session while it is fresh.</p>
+        <NuxtLink class="btn btn-secondary btn-full" to="/practice">
+          Open practice
+          <UIcon name="i-lucide-arrow-right" />
+        </NuxtLink>
+      </aside>
+    </section>
 
-    <SystemState
-      title="Recommended next step"
-      message="Finish road signs, then complete a related practice session."
-      action-label="Open practice"
-      action-to="/practice"
-    />
+    <section class="dashboard-stat-grid">
+      <NuxtLink class="dashboard-stat-card" to="/course">
+        <span class="dashboard-stat-icon">
+          <UIcon name="i-lucide-library-big" />
+        </span>
+        <small>Theory lessons</small>
+        <strong>{{ completedLessons }}/{{ totalLessons }}</strong>
+        <p>Completed lessons</p>
+      </NuxtLink>
+      <NuxtLink class="dashboard-stat-card" to="/practice">
+        <span class="dashboard-stat-icon">
+          <UIcon name="i-lucide-list-checks" />
+        </span>
+        <small>Practice</small>
+        <strong>8/10</strong>
+        <p>Latest topic score</p>
+      </NuxtLink>
+      <NuxtLink class="dashboard-stat-card" to="/mock-exams">
+        <span class="dashboard-stat-icon">
+          <UIcon name="i-lucide-clipboard-check" />
+        </span>
+        <small>Mock exam</small>
+        <strong>{{ result?.score }}/{{ result?.total }}</strong>
+        <p>{{ result?.passed ? 'Pass-ready result' : 'Needs more practice' }}</p>
+      </NuxtLink>
+    </section>
   </section>
 </template>

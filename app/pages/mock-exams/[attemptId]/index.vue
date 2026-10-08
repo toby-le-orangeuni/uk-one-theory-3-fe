@@ -25,10 +25,14 @@ const next = async () => {
 </script>
 
 <template>
-  <section class="stack">
-    <div class="section-header">
+  <section class="app-page">
+    <div class="app-page-hero">
       <div>
-        <h1 class="page-title">Exam question screen</h1>
+        <span class="app-eyebrow">
+          <UIcon name="i-lucide-timer" />
+          Mock exam
+        </span>
+        <h1>Question {{ index + 1 }}</h1>
         <p class="lead">Attempt {{ $route.params.attemptId }} · Question {{ index + 1 }} of {{ questions?.length || 0 }}</p>
       </div>
       <span class="pill">Timer 56:20</span>
